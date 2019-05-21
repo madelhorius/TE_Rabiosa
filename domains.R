@@ -1,3 +1,10 @@
+# ---------------------------------------------------------------------------------#
+# Protein domains LTR-RT ----------------------------------------------------------#
+# Get domains per LTR-RT according to ltrdigest gff output and write output table--#
+# Marius Hodel --------------------------------------------------------------------#
+# 2019-03-07 ----------------------------------------------------------------------#
+#----------------------------------------------------------------------------------#
+
 args <- commandArgs(trailingOnly = TRUE)
 if(length(args)<1) stop("didn't receive 2 arguments")
 gfffile <- args[1]
@@ -68,7 +75,7 @@ for (i in 1:nlevels(dom$attributes$X1)){
   prot.domains[i,3] <- paste(na.omit(lidom)[,2], collapse = "|")
   if(prot.domains[i,3] == "") prot.domains[i,3] <- NA
   
-  if (i %% 100 == 0) message(paste(i, "Elements processed"))
+  if (i %% 100  == 0) message(paste(i, "Elements processed"))
 }
 
 # Get back original numbering of LTR-RT
@@ -78,8 +85,20 @@ prot.domains$ID <- index[,2]
 # Add Gypsy and Copia according to order of domains
 prot.domains$superfam <- NA
 
-prot.domains$superfam <- ifelse(!is.na(prot.domains[,3]) & (prot.domains[,3] == "GAG|AP|RT|RH|INT" | prot.domains[,3] == "RT|RH|INT" | prot.domains[,3] == "RH|INT" | prot.domains[,3] == "RT|INT" | prot.domains[,3] == "GAG|RT|RH|INT" | prot.domains[,3] == "GAG|RH|INT" | prot.domains[,3] == "GAG|RT|INT" | prot.domains[,3] == "AP|RT|RH|INT" | prot.domains[,3] == "AP|RH|INT" | prot.domains[,3] == "AP|RT|INT" | prot.domains[,3] == "GAG|AP|RH|INT" | prot.domains[,3] == "GAG|AP|RT|INT"), "RLG", NA)
-prot.domains$superfam <- ifelse(!is.na(prot.domains[,3]) & (prot.domains[,3] == "GAG|AP|INT|RT|RH" | prot.domains[,3] == "INT|RT|RH"| prot.domains[,3] == "INT|RT"| prot.domains[,3] == "INT|RH"| prot.domains[,3] == "GAG|INT|RT|RH"| prot.domains[,3] == "GAG|INT|RT"| prot.domains[,3] == "GAG|INT|RH"| prot.domains[,3] == "AT|INT|RT|RH"| prot.domains[,3] == "AT|INT|RT"| prot.domains[,3] == "AT|INT|RH"| prot.domains[,3] == "GAG|AT|INT|RT"| prot.domains[,3] == "GAG|AT|INT|RH"), "RLC", prot.domains$superfam)
+prot.domains$superfam <- ifelse(!is.na(prot.domains[,3]) 
+                                & (prot.domains[,3] == "GAG|AP|RT|RH|INT" | prot.domains[,3] == "RT|RH|INT"
+                                  | prot.domains[,3] == "RH|INT" | prot.domains[,3] == "RT|INT" | prot.domains[,3] == "GAG|RT|RH|INT"
+                                  | prot.domains[,3] == "GAG|RH|INT" | prot.domains[,3] == "GAG|RT|INT" | prot.domains[,3] == "AP|RT|RH|INT"
+                                  | prot.domains[,3] == "AP|RH|INT" | prot.domains[,3] == "AP|RT|INT" | prot.domains[,3] == "GAG|AP|RH|INT"
+                                  | prot.domains[,3] == "GAG|AP|RT|INT"), "RLG", NA)
+
+prot.domains$superfam <- ifelse(!is.na(prot.domains[,3]) 
+                                & (prot.domains[,3] == "GAG|AP|INT|RT|RH" | prot.domains[,3] == "INT|RT|RH"| 
+                                   prot.domains[,3] == "INT|RT"| prot.domains[,3] == "INT|RH"|
+                                   prot.domains[,3] == "GAG|INT|RT|RH"| prot.domains[,3] == "GAG|INT|RT"| 
+                                   prot.domains[,3] == "GAG|INT|RH"| prot.domains[,3] == "AT|INT|RT|RH"|
+                                   prot.domains[,3] == "AT|INT|RT"| prot.domains[,3] == "AT|INT|RH"|
+                                   prot.domains[,3] == "GAG|AT|INT|RT"| prot.domains[,3] == "GAG|AT|INT|RH"), "RLC", prot.domains$superfam)
 
 
 f <- file("LTR_Protein_domains.txt", open="wb")
