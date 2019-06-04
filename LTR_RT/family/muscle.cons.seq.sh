@@ -1,3 +1,4 @@
+# Create a multiple sequence alignment for each (sub)family and get its consensus sequence
 while read p
 do
 	grep -w $p all.CLSTR | cut -f 1 | grep -f - /data/mahodel/work/ltr/ltrretriever/PARSED_FL_LTR_RT.pass.code.v3.fa -A1 | sed '/--/d' > $p.fa
