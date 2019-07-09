@@ -14,4 +14,9 @@ This repository includes all important scripts that were written for the Master`
 - `LTR-RT/family/extract.RT.dom.bedto.sh` extracts RT protein domains from ltrdigest output and creates a fasta file containing the protein sequence.
 - `LTR-RT/family/RT_INT_phylo.sh` builds phylogenetic trees of full-length LTR-RTs using RT and INT protein domain sequences.
 - `LTR-RT/insertions/RM.LTR.RT.insertion.finder.sh` finds additional insertions in the assembly and classifies them (requires `Parse_RepeatMaskerOutput.R`).
-- `LTR-RT/insertions/Parse_RepeatMaskerOutput.R` classifies hits of RepeatMasker output. 
+- `LTR-RT/insertions/Parse_RepeatMaskerOutput.R` classifies hits of RepeatMasker output.
+- `LTR-RT/analysis/treeplotting.R` is used to plot phylogenetic trees.
+- `LTR-RT/analysis/coverage.R` plots distribution of LTR-RT families across scaffolds and linkage groups.
+- `LTR-RT/analysis/fullfamily.R` contains the code used for all the remaining plots and for statistical tests.
+-  Required input files for R scripts in LTR-RT/analysis` can be downloaded here: https://bit.ly/2LbjIJ7
+ 
