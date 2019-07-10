@@ -4,7 +4,7 @@
 # 2019-06-07 ----------------------------------------------------------------------#
 #----------------------------------------------------------------------------------#
 
-# setwd("P:/mahodel")
+setwd("P:/mahodel")
 
 # Required packages
 library(ggplot2)
@@ -13,6 +13,7 @@ library(dplyr)
 library(gridExtra)
 library(plyr)
 library(RColorBrewer)
+library(treemapify)
 
 # Genome size
 genome.len <- 4531731679
@@ -190,6 +191,21 @@ pdf("Rplots/Families/fam.coverage.pdf", height = 8, width = 15)
 grid.arrange(RLplot,RLXplot, RLGplot, RLCplot, layout_matrix = lay)
 dev.off()
 
+#### Tremap plot #####
+#---------------------
+mycols <- c("#0073C2FF", "darkorange3", "darkgreen")
+
+cov <- as.data.frame(ltrcov %>% group_by(superfamily, family) %>% dplyr::summarise(sum = sum(len)))
+
+treemap <- ggplot(cov, aes(area = sum, fill = superfamily, subgroup = superfamily, label = family)) +
+  geom_treemap(color = "white") +
+  scale_fill_manual(values = mycols) +
+  geom_treemap_text(place = "centre", min.size = 8, colour = "white", padding.y = grid::unit(4, "mm"), padding.x = grid::unit(2, "mm")) +
+  theme(legend.position = c(0.2,0.2))
+
+pdf("Rplots/Families/fam.coverage.treemap.pdf", height = 8, width = 15)
+treemap
+dev.off()
 
 #### Compare number of copies (LTR_retriever and Repeat_masker output) ####
 # -------------------------------------------------------------------------
