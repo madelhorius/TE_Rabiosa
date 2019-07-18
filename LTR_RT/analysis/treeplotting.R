@@ -5,7 +5,7 @@
 # 2019-06-07-----------------------------------------------------------------------#
 #----------------------------------------------------------------------------------#
 
-# setwd("P:/mahodel")
+setwd("P:/mahodel")
 
 # Packages
 
@@ -138,7 +138,7 @@ RLG.tree1.reroot <- tree1.reroot
 
 # Add Neumann lineages to tree (Respective nodes were determined using blastp)
 
-RLG.tree <- ggtree(RLG.tree1.reroot, ) +
+RLG.tree <- ggtree(RLG.tree1.reroot) +
   geom_tippoint(aes(color=group), size = 1) +
   scale_color_manual(values = col, name = "Family") +
   geom_hilight(node=884, fill="firebrick4", alpha = 0.25) + 
@@ -155,13 +155,14 @@ RLG.tree <- ggtree(RLG.tree1.reroot, ) +
   geom_cladelabel(node=843, label="Retand", geom = "text", color = c("white", "black"), fontsize = 5) +
   geom_cladelabel(node=1, label="RLC", geom = "text", color = c("white", "black"), hjust = 1, vjust = 1.5, fontsize = 5) +
   theme(legend.position = "none") +
-  ggtitle("b)") +
+  ggtitle("b)")
+
   theme(plot.title = element_text(margin = margin(t = 10, b = -40), size = 25))
 
 # Copia tree
 # ----------
 
-tree1 <- read.tree("RLc.subsample.RT.INT.domain.bigfam.ph")
+tree1 <- read.tree("RLC.subsample.RT.INT.domain.bigfam.ph")
 tree1$tip.label <- gsub("_[a-zA-Z]_", "_", tree1$tip.label)
 groupInfo <- split(tree1$tip.label, as.data.frame(matrix(na.omit(unlist(strsplit(as.character(tree1$tip.label), "_"))), ncol = 4, byrow = T))[,3])
 tree1 <- groupOTU(tree1, groupInfo)
@@ -220,4 +221,28 @@ RLC.tree <- ggtree(RLC.tree1.reroot) +
 pdf("Rplots/Trees/finalTree.pdf", height = 16.5, width = 11.7)
 grid.arrange(RLC.tree, RLG.tree, layout_matrix = rbind(c(1,2),c(1,2)))
 dev.off()
-             
+
+# Plots for ppt
+RLC.pres <-  ggtree(RLC.tree1.reroot) +
+  coord_flip() +
+  geom_tippoint(aes(color=group), size = 1) +
+  scale_color_manual(values = col, name = "Family") +
+  geom_hilight(node=900, fill="gold", alpha = 0.25) + 
+  geom_hilight(node=828, fill="purple", alpha = 0.25) +
+  geom_hilight(node = 909, fill = "grey", alpha = 0.25) +
+  geom_hilight(node = 1100, fill = "red", alpha = 0.25) +
+  geom_hilight(node = 1130, fill = "blue", alpha = 0.25) +
+  geom_hilight(node = 1202, fill = "orange", alpha = 0.25) +
+  geom_hilight(node = 822, fill = "pink", alpha = 0.25) 
+RLG.pres <- ggtree(RLG.tree1.reroot) +
+  geom_tippoint(aes(color=group), size = 1) +
+  scale_color_manual(values = col, name = "Family") +
+  geom_hilight(node=884, fill="firebrick4", alpha = 0.25) + 
+  geom_hilight(node=848, fill="seagreen", alpha = 0.25) +
+  geom_hilight(node = 898, fill = "blue", alpha = 0.25) +
+  geom_hilight(node = 982, fill = "deeppink", alpha = 0.25) +
+  geom_hilight(node = 1159, fill = "aquamarine4", alpha = 0.25) +
+  geom_hilight(node = 843, fill = "darkgoldenrod3", alpha = 0.25) +
+  coord_flip()
+
+grid.arrange(RLC.pres, RLG.pres, layout_matrix = rbind(c(1,1),c(2,2)))
