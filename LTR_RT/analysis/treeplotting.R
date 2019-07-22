@@ -147,17 +147,18 @@ RLG.tree <- ggtree(RLG.tree1.reroot) +
   geom_hilight(node = 982, fill = "deeppink", alpha = 0.25) +
   geom_hilight(node = 1159, fill = "aquamarine4", alpha = 0.25) +
   geom_hilight(node = 843, fill = "darkgoldenrod3", alpha = 0.25) +
-  geom_cladelabel(node=884, label="Reina", geom = "text", color = c("white", "black"), fontsize = 5) + 
-  geom_cladelabel(node=848, label="Tekay", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=898, label="CRM", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=982, label="Athila", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=1159, label="Ogre", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=843, label="Retand", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=1, label="RLC", geom = "text", color = c("white", "black"), hjust = 1, vjust = 1.5, fontsize = 5) +
+  geom_cladelabel(node=884, label='paste(italic("Reina"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) + 
+  geom_cladelabel(node=848, label='paste(italic("Tekay"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=898, label='paste(italic("CRM"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=982, label='paste(italic("Athila"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=1159, label='paste(italic("Ogre"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=843, label='paste(italic("Retand"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=1, label="RLC", geom = "text", color = c("white", "black"), hjust = 1, vjust = 1.5, fontsize = 5, parse = T) +
   theme(legend.position = "none") +
-  ggtitle("b)")
-
+  ggtitle("b)") +
   theme(plot.title = element_text(margin = margin(t = 10, b = -40), size = 25))
+
+
 
 # Copia tree
 # ----------
@@ -206,14 +207,14 @@ RLC.tree <- ggtree(RLC.tree1.reroot) +
   geom_hilight(node = 1130, fill = "blue", alpha = 0.25) +
   geom_hilight(node = 1202, fill = "orange", alpha = 0.25) +
   geom_hilight(node = 822, fill = "pink", alpha = 0.25) +
-  geom_cladelabel(node=900, label="Ivana", geom = "text", color = c("white", "black"), fontsize = 5) + 
-  geom_cladelabel(node=828, label="SIRE", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=909, label="Ale", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=1100, label="Tork", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=1130, label="TAR", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=1202, label="Ikeros", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=822, label="Angela", geom = "text", color = c("white", "black"), fontsize = 5) +
-  geom_cladelabel(node=1, label="RLG", geom = "text", color = c("white", "black"), hjust = 1, vjust = 1.5, fontsize = 5) +
+  geom_cladelabel(node=900, label='paste(italic("Ivana"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) + 
+  geom_cladelabel(node=828, label='paste(italic("SIRE"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=909, label='paste(italic("Ale"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=1100, label='paste(italic("Tork"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=1130, label='paste(italic("TAR"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=1202, label='paste(italic("Ikeros"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=822, label='paste(italic("Angela"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
+  geom_cladelabel(node=1, label="RLG", geom = "text", color = c("white", "black"), hjust = 1, vjust = 1.5, fontsize = 5, parse = T) +
   theme(legend.position = "none") +
   ggtitle("a)") + 
   theme(plot.title = element_text(margin = margin(t = 10, b = -40), size = 25))

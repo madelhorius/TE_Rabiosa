@@ -200,8 +200,10 @@ cov <- as.data.frame(ltrcov %>% group_by(superfamily, family) %>% dplyr::summari
 treemap <- ggplot(cov, aes(area = sum, fill = superfamily, subgroup = superfamily, label = family)) +
   geom_treemap(color = "white") +
   scale_fill_manual(values = mycols) +
-  geom_treemap_text(place = "centre", min.size = 8, colour = "white", padding.y = grid::unit(4, "mm"), padding.x = grid::unit(2, "mm")) +
+  geom_treemap_text(place = "centre", min.size = 8, colour = "white", padding.y = grid::unit(4, "mm"),
+                    padding.x = grid::unit(2, "mm"), fontface = "italic") +
   theme(legend.position = c(0.2,0.2))
+  
 
 pdf("Rplots/Families/fam.coverage.treemap.pdf", height = 8, width = 15)
 treemap
@@ -322,10 +324,11 @@ p1 <- ggplot(big.ltr, aes(x=fam, y=insertiontime)) +
   scale_x_discrete(limits = pos) +
   coord_flip() +
   xlab("Family") +
-  ylab("Insertion time [myr]") +
+  ylab("Insertion time [My]") +
   theme(legend.position = c(0.15,0.85)) +
   theme(panel.grid.major.y = element_blank(), panel.grid.minor.y = element_blank()) +
-  theme(axis.line=element_blank(), axis.ticks.x = element_line()) +
+  theme(axis.line=element_blank()) +
+  theme(axis.text.y = element_text(face = "italic"), axis.ticks.x = element_line()) +
   scale_y_reverse(c(0,1)) +
   ylim(c(2.7,0)) +
   scale_fill_manual(values = mycols)
@@ -447,13 +450,14 @@ for (i in levels(big.ltr$fam)){
     nam <- paste("gg", i, sep = "_")
     p <- ggplot(data = tmp, aes(size, fill = cnesting)) +
       geom_histogram(binwidth = 100) +
-      annotate("text", label = i, x = 4000, y = Inf, vjust = 2, size = 5) +
+      annotate("text", label = i, x = 4000, y = Inf, vjust = 2, size = 5, fontface = 3) +
       xlab("TE size [nt]") +
       ylab("Copy number") +
-      scale_fill_discrete(name = "", labels = c("Not nested", "Insert", "Host")) +
+      scale_fill_manual(name = "", labels = c("Not nested", "Insert", "Host"), values = c("firebrick", "dodgerblue3", "seagreen")) +
       theme_bw() +
       scale_x_continuous(labels = function(x) format(x, big.mark = ",", scientific = FALSE), limits = c(2000, 23000)) +
-      theme(legend.position = c(0.8, 0.7))
+      theme(legend.position = c(0.8, 0.7)) 
+      
     assign(nam, p)
     print(p)
   }
@@ -535,7 +539,7 @@ p2 <- ggplot(data = tabfeat2, aes(x = family, y = propintron*100, fill = superfa
 p3 <- ggplot(data = tabfeat2, aes(x = family, y = proputr*100, fill = superfamily)) +
   geom_bar(stat = "identity") +
   theme_bw() +
-  theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 0.25)) +
+  theme(axis.text.x = element_text(angle = 30, hjust = 1, vjust = 0.25, face = "italic")) +
   theme(panel.grid.major.x = element_blank(), panel.grid.minor.x = element_blank()) +
   ylab("Insertions overlapping with UTRs of genes [%]") +
   xlab("Family") +

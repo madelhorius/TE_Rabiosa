@@ -5,7 +5,7 @@
 #----------------------------------------------------------------------------------#
 
 
-# setwd("P:/mahodel")
+setwd("P:/mahodel")
 library(ggplot2)
 library(dplyr)
 library(gridExtra)
@@ -123,7 +123,7 @@ p1 <- ggplot(covCamilla, aes(y = LG, x = start+15)) +
   xlab("Position [Mb]") +
   ylab("Linkage group") +
   labs(fill = "Coverage [%]") +
-  theme(axis.title.x = element_blank(), axis.text.x = element_blank()) +
+  theme(axis.title.x = element_blank(), axis.text.x = element_blank(), plot.title = element_text(face = "italic")) +
   theme(legend.position = c(0.85,0.85))
 
 p2 <- ggplot(covCastor, aes(y = LG, x = start+15)) +
@@ -134,7 +134,7 @@ p2 <- ggplot(covCastor, aes(y = LG, x = start+15)) +
   xlab("Position [Mb]") +
   ylab("Linkage group") +
   labs(fill = "Coverage [%]") +
-  theme(legend.position = c(0.85,0.85))
+  theme(legend.position = c(0.85,0.85), plot.title = element_text(face = "italic"))
 lay <- rbind(1,1,1,1,1,1,1,1,1,1,2,2,2,2,2,2,2,2,2,2,2)
 pdf("Rplots/Families/coverage_finalplot.pdf", height = 8, width = 12)
 grid.arrange(p1, p2, layout_matrix = lay)
