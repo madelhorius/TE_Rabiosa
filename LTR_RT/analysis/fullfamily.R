@@ -421,8 +421,8 @@ slo <- coefficients(agevssdlen)[2]
 pdf("Rplots/Families/TEsize_VS_Age.pdf", height = 5, width = 5)
 ggplot(data = fam.size, aes(y = meanage, x = sdlen)) +
   geom_point() +
-  xlab("Coefficient of variation of TE size per family") +
-  ylab("Mean insertion time per family [mya]") +
+  xlab("Coefficient of variation of element size per family") +
+  ylab("Mean insertion time per family [My]") +
   geom_abline(intercept = int, slope = slo, linetype = "dashed") +
   theme_classic() +
   geom_text(x = 0.1, y = 0.8, label = paste("R^2 == ", round(summary(agevssdlen)$r.squared,2) , sep = ""), parse = T)
@@ -465,11 +465,11 @@ for (i in levels(big.ltr$fam)){
 
 gg_Dom <- gg_Dom +
   theme(axis.title.y = element_blank(), legend.position = "blank")
-gg_Parrot <- gg_Parrot +
+gg_Camilla <- gg_Camilla +
   theme(axis.title.y = element_blank(), legend.position = "blank")
 lay <- rbind(c(1,2,3),c(1,2,3))
 pdf("Rplots/Families/elementSize.pdf", height = 5, width = 11)
-grid.arrange(gg_Camilla, gg_Dom, gg_Parrot, layout_matrix = lay)
+grid.arrange(gg_Parrot, gg_Camilla, gg_Dom, layout_matrix = lay)
 dev.off()
 
 #### Test relationship between categorical variables (Collocalization) ####
@@ -481,7 +481,7 @@ tabfeat2 <- data.frame(matrix(nrow = 29, ncol = 0))
 expected <- vector()
 for (j in 1:3) {
   tabfeat  <- table(big.ltr$fam, big.ltr[,j+9])
-  tabfeat2 <- cbind(tabfeat2, as.data.frame(tabfeat[,2]/tabfeat[,1])[,1])
+  tabfeat2 <- cbind(tabfeat2, as.data.frame(tabfeat[,2]/(tabfeat[,1]+tabfeat[,2])))
   expected[j] <- (sum(tabfeat[,2])/sum((tabfeat[,1]+tabfeat[,2]))*100)
   for (i in 1:nrow(tabfeat)){
     bi <- binom.test(x = tabfeat[i,2], tabfeat[i,1]+tabfeat[i,2], p = sum(tabfeat[,2])/sum((tabfeat[,1]+tabfeat[,2])),
@@ -561,7 +561,7 @@ tabfeat2 <- data.frame(matrix(nrow = 3, ncol = 0))
 expected <- vector()
 for (j in 1:3) {
   tabfeat  <- table(ltr$superfamily, ltr[,j+9])
-  tabfeat2 <- cbind(tabfeat2, as.data.frame(tabfeat[,2]/tabfeat[,1])[,1])
+  tabfeat2 <- cbind(tabfeat2, as.data.frame(tabfeat[,2]/(tabfeat[,1]+tabfeat[,2]))[,1])
   for (i in 1:nrow(tabfeat)){
     bi <- binom.test(x = tabfeat[i,2], tabfeat[i,1]+tabfeat[i,2], p = sum(tabfeat[,2])/sum((tabfeat[,1]+tabfeat[,2])),
                      alternative = "two.sided")

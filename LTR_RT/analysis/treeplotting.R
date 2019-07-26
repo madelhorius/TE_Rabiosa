@@ -155,8 +155,8 @@ RLG.tree <- ggtree(RLG.tree1.reroot) +
   geom_cladelabel(node=843, label='paste(italic("Retand"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
   geom_cladelabel(node=1, label="RLC", geom = "text", color = c("white", "black"), hjust = 1, vjust = 1.5, fontsize = 5, parse = T) +
   theme(legend.position = "none") +
-  ggtitle("b)") +
-  theme(plot.title = element_text(margin = margin(t = 10, b = -40), size = 25))
+  ggtitle("Gypsy") +
+  theme(plot.title = element_text(margin = margin(t = 10, b = -40), size = 25, face = "italic"))
 
 
 
@@ -216,8 +216,8 @@ RLC.tree <- ggtree(RLC.tree1.reroot) +
   geom_cladelabel(node=822, label='paste(italic("Angela"))', geom = "text", color = c("white", "black"), fontsize = 5, parse = T) +
   geom_cladelabel(node=1, label="RLG", geom = "text", color = c("white", "black"), hjust = 1, vjust = 1.5, fontsize = 5, parse = T) +
   theme(legend.position = "none") +
-  ggtitle("a)") + 
-  theme(plot.title = element_text(margin = margin(t = 10, b = -40), size = 25))
+  ggtitle('Copia') + 
+  theme(plot.title = element_text(margin = margin(t = 10, b = -40), size = 25, face = "italic"))
 
 pdf("Rplots/Trees/finalTree.pdf", height = 16.5, width = 11.7)
 grid.arrange(RLC.tree, RLG.tree, layout_matrix = rbind(c(1,2),c(1,2)))
