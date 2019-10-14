@@ -64,101 +64,114 @@ for (i in 1:max(repma$ID)){
   int <- TE[grepl("int-int", TE$TE),]
   if (nrow(int) > 0) {
     ltr <- TE[grepl("LTR", TE$TE),]
-    if (nrow (ltr) > 0) {
-      whichLTR <- grepl("LTR", TE$TE)
-      # TE starts and ends with an LTR => FL element
-      if (whichLTR[length(whichLTR)] & whichLTR[1]) {
-        # Check if it is a complex insertion (containing additional LTR-sequences within the internal sequence)
-        intstart <- min(TE[grepl("int", TE$TE),6])
-        intend <- max(TE[grepl("int", TE$TE),7])
-        ltr.within <- TE[grepl("LTR", TE$TE) & TE$seq.begin > intstart & TE$seq.end < intend,]
-        if(nrow(ltr.within) > 1){ # complex
-          feature <- "FL-LTR-RT-complex"
+    whichLTR <- grepl("LTR", TE$TE)
+    # TE starts and ends with an LTR => FL element
+    if (whichLTR[length(whichLTR)] & whichLTR[1]) {
+      # Check if it is a complex insertion (containing additional LTR-sequences within the internal sequence)
+      intstart <- min(TE[grepl("int", TE$TE),6])
+      intend <- max(TE[grepl("int", TE$TE),7])
+      ltr.within <- TE[grepl("LTR", TE$TE) & TE$seq.begin > intstart & TE$seq.end < intend,]
+      if(nrow(ltr.within) > 1){ # complex
+        feature <- "FL-LTR-RT-complex"
+      } else {
+        feature <- "FL-LTR-RT"
+      }
+      FL[nrRfl,] <- NA
+      FL$seqname[nrRfl] <- as.character(TE$sequence[1])
+      FL$source[nrRfl] <- "RepeatMasker_R"
+      FL$feature[nrRfl] <- feature
+      FL$start[nrRfl] <- min(TE$seq.begin)
+      FL$end[nrRfl] <- max(TE$seq.end)
+      FL$attribute[nrRfl] <- paste("ID=", TE$fam[1], ".", nrfl, sep = "")
+      FL$score[nrRfl] <- sum(TE$score)
+      if (TE$strand[1] == "+") {
+        FL$strand[nrRfl] <- "+" 
+      } else {
+        FL$strand[nrRfl] <- "-"
+      }
+      # counters
+      nrRfl <- nrRfl + 1
+      
+      # Add parts if the gaps between the hits are bigger than 79 bp (to allow nesting later)
+      nrpart <- 1
+      partStart <- min(TE$seq.begin)
+      for (k in 1:(nrow(TE)-1)) {
+        inslen <- TE$seq.begin[k+1] - TE$seq.end[k]
+        if (inslen > 79) {
+          FL[nrRfl,] <- NA
+          FL$seqname[nrRfl] <- as.character(TE$sequence[1])
+          FL$source[nrRfl] <- "RepeatMasker_R"
+          FL$feature[nrRfl] <- "part"
+          FL$start[nrRfl] <- partStart
+          FL$end[nrRfl] <- TE$seq.end[k]
+          FL$attribute[nrRfl] <- paste("ID=", TE$fam[1], ".", nrfl, ":part:", nrpart, ";Parent=", TE$fam[1], ".", nrfl, sep = "")
+          FL$score[nrRfl] <- sum(TE$score)
+          # Start of next part
+          partStart <- TE$seq.begin[k+1]
+          # counters
+          nrRfl <- nrRfl + 1
+          nrpart <- nrpart + 1
+        }
+        # Last part
+        if (k == (nrow(TE)-1)){
+          FL[nrRfl,] <- NA
+          FL$seqname[nrRfl] <- as.character(TE$sequence[1])
+          FL$source[nrRfl] <- "RepeatMasker_R"
+          FL$feature[nrRfl] <- "part"
+          FL$start[nrRfl] <- partStart
+          FL$end[nrRfl] <- TE$seq.end[k+1]
+          FL$attribute[nrRfl] <- paste("ID=", TE$fam[1], ".", nrfl, ":part:", nrpart, ";Parent=", TE$fam[1], ".", nrfl, sep = "")
+          FL$score[nrRfl] <- sum(TE$score)
+          
+          nrRfl <- nrRfl + 1
+        }
+      }
+      nrfl <- nrfl + 1
+    } else { # truncated TE (only one or no LTR and some internal sequence) => Add to gff file
+      
+      # Check if it is a complex insertion (containing mutliple LTRs within the internal region)
+      intstart <- min(TE[grepl("int", TE$TE),6])
+      intend <- max(TE[grepl("int", TE$TE),7])
+      ltr.within <- TE[grepl("LTR", TE$TE) & TE$seq.begin > intstart & TE$seq.end < intend,]
+      if (nrow(ltr.within) > 0) {
+        feature <- "Trunc-LTR-RT-complex"
+      } else if (nrow(ltr) < 1) {
+        feature <- "Trunc-LTR-RT-int"
+      } else {
+        feature <- "Trunc-LTR-RT"
+      }
+      
+      Trunc[nrRtr,] <- NA
+      Trunc$seqname[nrRtr] <- as.character(TE$sequence[1])
+      Trunc$source[nrRtr] <- "RepeatMasker_R"
+      Trunc$feature[nrRtr] <- feature
+      Trunc$start[nrRtr] <- min(TE$seq.begin)
+      Trunc$end[nrRtr] <- max(TE$seq.end)
+      Trunc$attribute[nrRtr] <- paste("ID=Trunc.", TE$fam[1], ".", nrtr, sep = "")
+      Trunc$score[nrRtr] <- sum(TE$score)
+      if (TE$strand[1] == "+") {
+        Trunc$strand[nrRtr] <- "+" 
+      } else {
+        Trunc$strand[nrRtr] <- "-"
+      }
+      # counters
+      nrRtr <- nrRtr + 1
+      
+      nrpart <- 1
+      partStart <- min(TE$seq.begin)
+      for (k in 1:(nrow(TE))) {
+        # Last part
+        if (k == (nrow(TE)) | nrow(TE) == 1){
+          Trunc[nrRtr,] <- NA
+          Trunc$seqname[nrRtr] <- as.character(TE$sequence[1])
+          Trunc$source[nrRtr] <- "RepeatMasker_R"
+          Trunc$feature[nrRtr] <- "part"
+          Trunc$start[nrRtr] <- partStart
+          Trunc$end[nrRtr] <- TE$seq.end[k]
+          Trunc$attribute[nrRtr] <- paste("ID=Trunc.", TE$fam[1], ".", nrtr, ":part:", nrpart, ";Parent=Trunc.", TE$fam[1], ".", nrtr, sep = "")
+          Trunc$score[nrRtr] <- sum(TE$score)
+          nrRtr <- nrRtr + 1
         } else {
-          feature <- "FL-LTR-RT"
-        }
-        FL[nrRfl,] <- NA
-        FL$seqname[nrRfl] <- as.character(TE$sequence[1])
-        FL$source[nrRfl] <- "RepeatMasker_R"
-        FL$feature[nrRfl] <- feature
-        FL$start[nrRfl] <- min(TE$seq.begin)
-        FL$end[nrRfl] <- max(TE$seq.end)
-        FL$attribute[nrRfl] <- paste("ID=", TE$fam[1], ".", nrfl, sep = "")
-        FL$score[nrRfl] <- sum(TE$score)
-        if (TE$strand[1] == "+") {
-          FL$strand[nrRfl] <- "+" 
-        } else {
-          FL$strand[nrRfl] <- "-"
-        }
-        # counters
-        nrRfl <- nrRfl + 1
-        
-        # Add parts if the gaps between the hits are bigger than 79 bp (to allow nesting laTEr)
-        nrpart <- 1
-        partStart <- min(TE$seq.begin)
-        for (k in 1:(nrow(TE)-1)) {
-          inslen <- TE$seq.begin[k+1] - TE$seq.end[k]
-          if (inslen > 79) {
-            FL[nrRfl,] <- NA
-            FL$seqname[nrRfl] <- as.character(TE$sequence[1])
-            FL$source[nrRfl] <- "RepeatMasker_R"
-            FL$feature[nrRfl] <- "part"
-            FL$start[nrRfl] <- partStart
-            FL$end[nrRfl] <- TE$seq.end[k]
-            FL$attribute[nrRfl] <- paste("ID=", TE$fam[1], ".", nrfl, ":part:", nrpart, ";Parent=", TE$fam[1], ".", nrfl, sep = "")
-            FL$score[nrRfl] <- sum(TE$score)
-            # Start of next part
-            partStart <- TE$seq.begin[k+1]
-            # counters
-            nrRfl <- nrRfl + 1
-            nrpart <- nrpart + 1
-          }
-          # Last part
-          if (k == (nrow(TE)-1)){
-            FL[nrRfl,] <- NA
-            FL$seqname[nrRfl] <- as.character(TE$sequence[1])
-            FL$source[nrRfl] <- "RepeatMasker_R"
-            FL$feature[nrRfl] <- "part"
-            FL$start[nrRfl] <- partStart
-            FL$end[nrRfl] <- TE$seq.end[k+1]
-            FL$attribute[nrRfl] <- paste("ID=", TE$fam[1], ".", nrfl, ":part:", nrpart, ";Parent=", TE$fam[1], ".", nrfl, sep = "")
-            FL$score[nrRfl] <- sum(TE$score)
-            
-            nrRfl <- nrRfl + 1
-          }
-        }
-        nrfl <- nrfl + 1
-      } else { # truncated TE (only one LTR and some internal sequence) => Add to gff file
-        
-        # Check if it is a complex insertion (containing mutliple LTRs within the internal region)
-        intstart <- min(TE[grepl("int", TE$TE),6])
-        intend <- max(TE[grepl("int", TE$TE),7])
-        ltr.within <- TE[grepl("LTR", TE$TE) & TE$seq.begin > intstart & TE$seq.end < intend,]
-        if (nrow(ltr.within) > 0) {
-          feature <- "Trunc-LTR-RT-complex"
-        } else {
-          feature <- "Trunc-LTR-RT"
-        }
-        
-        Trunc[nrRtr,] <- NA
-        Trunc$seqname[nrRtr] <- as.character(TE$sequence[1])
-        Trunc$source[nrRtr] <- "RepeatMasker_R"
-        Trunc$feature[nrRtr] <- feature
-        Trunc$start[nrRtr] <- min(TE$seq.begin)
-        Trunc$end[nrRtr] <- max(TE$seq.end)
-        Trunc$attribute[nrRtr] <- paste("ID=Trunc.", TE$fam[1], ".", nrtr, sep = "")
-        Trunc$score[nrRtr] <- sum(TE$score)
-        if (TE$strand[1] == "+") {
-          Trunc$strand[nrRtr] <- "+" 
-        } else {
-          Trunc$strand[nrRtr] <- "-"
-        }
-        # counters
-        nrRtr <- nrRtr + 1
-        
-        nrpart <- 1
-        partStart <- min(TE$seq.begin)
-        for (k in 1:(nrow(TE)-1)) {
           inslen <- TE$seq.begin[k+1] - TE$seq.end[k]
           if (inslen > 79) {
             Trunc[nrRtr,] <- NA
@@ -175,24 +188,9 @@ for (i in 1:max(repma$ID)){
             nrRtr <- nrRtr + 1
             nrpart <- nrpart + 1
           }
-          # Last part
-          if (k == (nrow(TE)-1)){
-            Trunc[nrRtr,] <- NA
-            Trunc$seqname[nrRtr] <- as.character(TE$sequence[1])
-            Trunc$source[nrRtr] <- "RepeatMasker_R"
-            Trunc$feature[nrRtr] <- "part"
-            Trunc$start[nrRtr] <- partStart
-            Trunc$end[nrRtr] <- TE$seq.end[k+1]
-            Trunc$attribute[nrRtr] <- paste("ID=Trunc.", TE$fam[1], ".", nrtr, ":part:", nrpart, ";Parent=Trunc.", TE$fam[1], ".", nrtr, sep = "")
-            Trunc$score[nrRtr] <- sum(TE$score)
-            
-            nrRtr <- nrRtr + 1
-          }
         }
-        nrtr <- nrtr + 1
       }
-    } else { # Only internal sequence => skip
-      next
+      nrtr <- nrtr + 1
     }
   } else { # Add Solo LTR to gff file
     
@@ -284,6 +282,7 @@ if(nrow(tru) > 1) {
 }
 
 # Check if Solo LTR could be part of a truncated element => and therefore a FL-element
+# Check if Solo LTR could be part of a truncated element => and therefore a FL-element
 toRM <- vector()
 if (nrow(Solo) > 0 & nrow(Trunc) > 0) {
   for (i in 1:nrow(Solo)){
@@ -295,7 +294,7 @@ if (nrow(Solo) > 0 & nrow(Trunc) > 0) {
     # Check left candidate
     if(nrow(truLeft) != 0) {
       truLeft <- truLeft[order(truLeft$end, decreasing = T),]
-      if(grepl("int-int", repma[repma$seq.end == truLeft$end[1] & repma$sequence == truLeft$seqname[1],]$TE)){
+      if(grepl("int-int", repma[repma$seq.end == truLeft$end[1] & repma$sequence == truLeft$seqname[1],]$TE[1])){
         if(truLeft$strand[1] == Solo[i,]$strand){
           left <- T
         } else {
@@ -310,7 +309,7 @@ if (nrow(Solo) > 0 & nrow(Trunc) > 0) {
     # Check right candidate
     if(nrow(truRight) != 0) {
       truRight <- truRight[order(truRight$start),]
-      if(grepl("int-int", repma[repma$seq.begin == truRight$start[1] & repma$sequence == truRight$seqname[1],]$TE)) {
+      if(grepl("int-int", repma[repma$seq.begin == truRight$start[1] & repma$sequence == truRight$seqname[1],]$TE[1])) {
         if(truRight$strand[1] == Solo[i,]$strand){
           right <- T
         } else {
@@ -344,7 +343,8 @@ if (nrow(Solo) > 0 & nrow(Trunc) > 0) {
       attr1 <- paste(attr1, "part", sep =":")
       newFL <- rbind(newFL, Trunc[grepl(attr1,Trunc$attribute),], Solo[i,])
       # Check if LTR on both sides of new TE
-      logFL <- grepl("LTR", repma[repma$seq.begin == min(newFL$start) & repma$sequence == newFL$seqname[1],]$TE)
+      check <-repma[repma$seq.begin == min(newFL$start) & repma$sequence == newFL$seqname[1],]
+      logFL <- grepl("LTR", check[order(-check$score),]$TE[1])
     } else {
       attr1<- truRight$attribute[1]
       newFL <- Trunc[Trunc$attribute == attr1,]
@@ -357,7 +357,8 @@ if (nrow(Solo) > 0 & nrow(Trunc) > 0) {
       attr1 <- paste(attr1, "part", sep =":")
       newFL <- rbind(Solo[i,], newFL, Trunc[grepl(attr1,Trunc$attribute),])
       # Check if LTR on both sides of new TE
-      logFL <- grepl("LTR", repma[repma$seq.end == max(newFL$end) & repma$sequence == newFL$seqname[1],]$TE)
+      check <- repma[repma$seq.end == max(newFL$end) & repma$sequence == newFL$seqname[1],]
+      logFL <- grepl("LTR", check[order(-check$score),]$TE[1])
     }
     score <- sum(newFL[newFL$feature != "part",]$score)
     # Add new FL-TE
@@ -405,13 +406,13 @@ if (nrow(Solo) > 0 & nrow(Trunc) > 0) {
         Trunc <- rbind(Trunc, newPart)
       } else {
         ID <- Trunc[grepl(truRight$attribute[1],Trunc$attribute) & (Trunc$feature == "Trunc-LTR-RT" | Trunc$feature == "Trunc-LTR-RT-complex"),]$attribute[1]
-        Trunc[Trunc$attribute == ID,]$start <- min(newFL$end)
+        Trunc[Trunc$attribute == ID,]$start <- min(newFL$start)
         Trunc[Trunc$attribute == ID,]$score <- score
         Trunc[(grepl(paste(ID, ":", sep =""), Trunc$attribute)),]$score <- score
-        newPart <- head(newFL,2)
+        newPart <- newFL[newFL$feature == "Solo-LTR",]
         newPart$feature <- "part"
         newPart$score <- score
-        newPart$attribute <- paste(newFL$attribute[2], ":part:", (nrow(newFL)-1), ";Parent=", gsub("ID=", "", head(newFL$attribute,1)), sep = "")
+        newPart$attribute <- paste(newFL$attribute[2], ":part:", (nrow(newFL)-1), ";Parent=", gsub("ID=", "", newFL$attribute[2]), sep = "")
         Trunc <- rbind(Trunc, newPart)
       }
       
